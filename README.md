@@ -1,3 +1,3 @@
 # Computing-CW
 
-Our Git Repository for our 2022 Computing+ Coursework, team members are Jay Liew Sin Jie & Boaz Goh Chen En
+2022 Computing+ Coursework Github Repository, when posting your code, please check that it has synced to the master file, thanks!
