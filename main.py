@@ -1,14 +1,11 @@
 import pandas as pd
 import numpy as np
 import pickle 
-from sklearn.pipeline import Pipeline
-from flask import Flask,render_template,request
-import csv
 
 model_in = open('model_pickle','rb')
 pipeline_model = pickle.load(model_in)
+
 inputdata = input("Input the message: ")
-checkTF = True
 result = pipeline_model.predict(pd.Series(np.array([inputdata])))
 
 if result == ['ham']:

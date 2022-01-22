@@ -1,11 +1,18 @@
 import pandas as pd
-import numpy as np
-import nltk
 import re
-from nltk.corpus import stopwords
-import pickle 
+import pickle
 
-df = pd.read_csv(r'/Users/Jappy/Documents/Computing+CW/spam.csv',encoding='Windows-1252')
+gist_file = open('model/gist_stopwords.txt', 'r')
+
+try:
+    content = gist_file.read()
+    stopwords = content.split(",")
+    stopwords = [i.replace('"',"").strip() for i in stopwords]
+
+finally:
+    gist_file.close()
+    
+df = pd.read_csv(r'model/spam.csv',encoding='utf-8',on_bad_lines='skip')
 
 # get necessary columns for processing
 df = df[['v2', 'v1']]
@@ -14,7 +21,7 @@ df = df.rename(columns={'v2': 'messages', 'v1': 'label'})
 # check for null values
 df.isnull().sum()
 
-STOPWORDS = set(stopwords.words('english'))
+STOPWORDS = set(stopwords)
 
 def clean_text(text):
     # convert to lowercase
