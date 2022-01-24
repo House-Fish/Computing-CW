@@ -42,5 +42,3 @@ with open('spam.csv','r') as spam_file:
             spam_addon.write(str(data+'\n'))
         spam_addon.close()
 spam_file.close()
-
-

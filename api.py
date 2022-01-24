@@ -17,8 +17,8 @@ app = Flask(__name__)
 
 def request_page():
     phrase_query = str(request.args.get('requests'))
-    train = str(request.args.get('train', default=None, type=None))
-    dataType = str(request.args.get('type', default=None, type=None))
+    train = bool(request.args.get('train'))
+    dataType = str(request.args.get('dataType'))
     
     result = str(pipeline_model.predict(pd.Series(np.array([phrase_query])))[0])
     
@@ -27,7 +27,9 @@ def request_page():
     else:
         result = False
 
-    if train == True and dataType != None:
+    if train == True and (dataType == "spam" or dataType == "ham"):
+        
+        print("Adding Data into spam.csv")
         
         data = str(dataType + ',' + phrase_query + ","+","+",")
         
@@ -38,6 +40,8 @@ def request_page():
                     spam_addon.write(str(data+'\n'))
                 spam_addon.close()
             spam_file.close()
+            
+        print("Data has been successfully added")
 
     with open('model/spam.csv','r') as spam_count:
         dataPoints = len(list(spam_count))
