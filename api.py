@@ -4,8 +4,10 @@ import numpy as np
 from flask import *
 import json, time
 import pickle
-from data.ph_blacklist.phone_blacklist import isBlacklistPH, casesPH
-from data.link_blacklist.url_blacklist import isBlacklistURL, casesURL
+from data.lang_model.model import addSpamMessage
+from data.ph_blacklist.phone_blacklist import addBlacklistPH, isBlacklistPH, casesPH
+from data.link_blacklist.url_blacklist import addBlacklistURL, isBlacklistURL, casesURL
+from json import JSONEncoder
 
 model_in = open('data/lang_model/model_pickle','rb')
 pipeline_model = pickle.load(model_in)
@@ -34,7 +36,7 @@ def request_page():
         URLBlacklist = isBlacklistURL(url)
 
     except:
-        URLBlacklist = 0
+        URLBlacklist = -1
 
     #blackList phone numbers 
     PHBlacklist = isBlacklistPH(phone_number)
@@ -56,43 +58,21 @@ def request_page():
             
     if reSum >= 2:
         overallRes = "Spam"
+        addBlacklistPH(phone_number)
+        if URLBlacklist != -1:
+            addBlacklistURL(url)
+        
+    addSpamMessage(overallRes,phrase_query)
     
     with open('data/lang_model/spam.csv','r') as data:
         casesModel = len(data.readlines())
+
+    data_set = {"id": 1, "message": phrase_query, "result": overallRes,"response": [{"type": "langModel","langRes": result[0],"testCaseModel": casesModel},{"type": "phBlack","PHRes": result[1],"testCasePH": casesPH()},{"type": "linkBlack","URLRes": result[2],"testCaseURL": casesURL()}],"error": "ERROR OOPSIE"}
     
-    data_set = "PLACEHOLDER"
-    json_dump = json.dumps(data_set)
+    json_dump = json.dumps(data_set, indent = 4)
     
     return json_dump
 
 if __name__ == '__main__':
     app.run(port=6969)
     
-'''
-    data_set = {
-        "id": 1,
-        "message": phrase_query,
-        "result": overallRes,
-        "response": [
-            {
-                "type": "langModel",
-                "langRes": result[0],
-                #"accuracy": INT,
-                "testCase": casesModel
-            },
-            {
-                "type": "phBlack",
-                "langRes": result[1],
-                "testCase": casesPH
-            },
-            {
-                "type": "linkBlack",
-                "langRes": result[2],
-                "testCase": casesURL
-            }
-        ],
-        "error": {
-            "ERROR OOPSIE"
-        }    
-    }
-'''

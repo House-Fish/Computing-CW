@@ -85,3 +85,4 @@ def casesPH():
     with open("data/ph_blacklist/phone-number.csv", 'r') as data:
         count = len(data.readlines())
     return count
+
