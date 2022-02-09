@@ -2,7 +2,7 @@ import pandas as pd
 import re
 import pickle
 
-gist_file = open('model/gist_stopwords.txt', 'r')
+gist_file = open('data/model/gist_stopwords.txt', 'r')
 
 try:
     content = gist_file.read()
@@ -12,7 +12,7 @@ try:
 finally:
     gist_file.close()
     
-df = pd.read_csv(r'model/spam.csv',encoding='utf-8',on_bad_lines='skip')
+df = pd.read_csv(r'data/model/spam.csv',encoding='utf-8',on_bad_lines='skip')
 
 # get necessary columns for processing
 df = df[['v2', 'v1']]
@@ -41,9 +41,9 @@ X = df['clean_text']
 y = df['label']
 
 from sklearn.pipeline import Pipeline
-from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
-from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer, TfidfTransformer
+from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 
 def classify(model, X, y):
     # train test split
@@ -53,13 +53,14 @@ def classify(model, X, y):
     pipeline_model = Pipeline([('vect', CountVectorizer()),
                               ('tfidf', TfidfTransformer()),
                               ('clf', model)])
-    pipeline_model.fit(x_train, y_train)
     
+    pipeline_model.fit(x_train, y_train)
+        
     with open('model_pickle','wb') as f:
         pickle.dump(pipeline_model,f)
         
     print('Accuracy:', pipeline_model.score(x_test, y_test)*100)
-    y_pred = pipeline_model.predict(x_test)
+    y_pred = pipeline_model.predict(x_test) 
     print(classification_report(y_test, y_pred))
 
 from sklearn.svm import SVC

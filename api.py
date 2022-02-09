@@ -1,14 +1,14 @@
-import black
+import re
 import pandas as pd
 import numpy as np
 from flask import *
 import json, time
 import pickle
+from data.ph_blacklist.phone_blacklist import isBlacklistPH, casesPH
+from data.link_blacklist.url_blacklist import isBlacklistURL, casesURL
 
-model_in = open('model_pickle','rb')
+model_in = open('data/lang_model/model_pickle','rb')
 pipeline_model = pickle.load(model_in)
-
-updateCount = 0
 
 app = Flask(__name__)
 
@@ -18,90 +18,81 @@ app = Flask(__name__)
 
 def request_page():
 
+    result = [False, False, False]
+    reSum = 0
+    overallRes = "Ham"
+    
     #get request from api
     phone_number = str(request.args.get('phone'))
     phrase_query = str(request.args.get('requests'))
     train = bool(request.args.get('train'))
     dataType = str(request.args.get('dataType'))
     
+    #blackList URL
+    try:
+        url = re.findall(r'(https?:\/\/)?(\w+(\.\w+)+)(\/\w*)*', phrase_query)[0][1]
+        URLBlacklist = isBlacklistURL(url)
 
+    except:
+        URLBlacklist = 0
 
+    #blackList phone numbers 
+    PHBlacklist = isBlacklistPH(phone_number)
+
+    #langResult from ML of spam
+    msgFormat = pd.Series(np.array([phrase_query]))
+    langRes = str(pipeline_model.predict(msgFormat)[0])
     
-
-
-    d = dict()
-    F = open("model/phone_number.csv")
-    bl_times =0
-    for line in F:
-        line = line. strip('\n')
-        (key, val) = line. split(",")
-        d[key] = val
-        if phone_number in d:
-            bl_times += 1
-
-
-    #results from ML of spam
-    result = str(pipeline_model.predict(pd.Series(np.array([phrase_query])))[0])
+    if langRes == "spam":
+        result[0] = True
+    if PHBlacklist > 5:
+        result[1] = True
+    if URLBlacklist > 2:
+        result[2] = True
     
-    if result == "spam" and bl_times >5:
-        result = True
-    elif result == "spam":
-        result = True
-    else:
-        result = False
-
-
-    
-
-    if train == True and (dataType == "spam" or dataType == "ham"):
-        
-        print("Adding Data into spam.csv")
-        
-        data = str(dataType + ',' + phrase_query + ","+","+",")
-        
-        with open('model/spam.csv','r') as spam_file:
-            mylist = [line.rstrip('\n') for line in spam_file]
-            if data not in mylist:
-                with open('model/spam.csv','a+') as spam_addon:
-                    spam_addon.write(str(data+'\n'))
-                spam_addon.close()
-            spam_file.close()
+    for i in range(3):
+        if result[i] == True:
+            reSum += 1
             
-        print("Data has been successfully added")
-
-
-    if train == True and dataType == "spam":
-        print("Adding Data into phone_number.csv")
-        num_count=1
-
-        d = dict()
-        F = open("model/phone_number.csv")
-        for line in F:
-            line = line. strip('\n')
-            (key, val) = line. split(",")
-            d[key] = val
-        num_count=int((d[phone_number]))+1
-        print(num_count)
-        num_count=str(num_count)
-
-        data = str(phone_number + ',' + num_count)
-        print(data)
-        with open('model/phone_number.csv','a+') as number_add:
-            number_add.write(str(data+'\n'))
-        number_add.close()
-
-        print("Data has been successfully added")
-        
-
-
-    with open('model/spam.csv','r') as spam_count:
-        dataPoints = len(list(spam_count))
-    spam_count.close()
-        
-    data_set = {'Count': dataPoints, 'Result': result}
+    if reSum >= 2:
+        overallRes = "Spam"
+    
+    with open('data/lang_model/spam.csv','r') as data:
+        casesModel = len(data.readlines())
+    
+    data_set = "PLACEHOLDER"
     json_dump = json.dumps(data_set)
     
     return json_dump
 
 if __name__ == '__main__':
     app.run(port=6969)
+    
+'''
+    data_set = {
+        "id": 1,
+        "message": phrase_query,
+        "result": overallRes,
+        "response": [
+            {
+                "type": "langModel",
+                "langRes": result[0],
+                #"accuracy": INT,
+                "testCase": casesModel
+            },
+            {
+                "type": "phBlack",
+                "langRes": result[1],
+                "testCase": casesPH
+            },
+            {
+                "type": "linkBlack",
+                "langRes": result[2],
+                "testCase": casesURL
+            }
+        ],
+        "error": {
+            "ERROR OOPSIE"
+        }    
+    }
+'''
