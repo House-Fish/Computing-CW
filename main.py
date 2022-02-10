@@ -64,9 +64,9 @@ if train == "N":
         casesModel = len(data.readlines())
 
     if overallRes == "Spam":
-        print(overallRes, ', Your message is not safe')
+        print(overallRes, ' , Your message is not safe')
     else:
-        print(overallRes, ', Your message is safe')
+        print(overallRes, ' , Your message is  safe')
 
 
 elif train == "Y":
