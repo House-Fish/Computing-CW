@@ -55,7 +55,7 @@ def request_page():
         
     if langRes == "spam":
         result[0] = True
-    if PHBlacklist > 5:
+    if PHBlacklist > 2:
         result[1] = True
     if URLBlacklist > 2:
         result[2] = True
