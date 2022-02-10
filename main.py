@@ -5,6 +5,7 @@ import json, time
 import pickle
 from data.ph_blacklist.phone_blacklist import isBlacklistPH, casesPH, addBlacklistPH, removeBlacklistPH
 from data.link_blacklist.url_blacklist import isBlacklistURL, casesURL, addBlacklistURL, removeBlacklistURL
+from os import system
 
 model_in = open('data/lang_model/model_pickle','rb')
 pipeline_model = pickle.load(model_in)
@@ -12,13 +13,23 @@ result = [False, False, False]
 reSum = 0
 overallRes = "Ham"
 
+def clear():
+     _ = system('clear')
 
+clear()
 
 #ask user for input
-
-data=str(input("input the phone number and the message to be checked seperated by a comma: "))
-phone_number, phrase_query=data.split(",")
-train = str(input("Would you like to train the model? [Y/N]: "))
+print("Input the phone number and the message to be checked seperated by a comma: ")
+print("     Example input: 88888888, hello how are you?")
+data=str(input("Input here: "))
+print(" ")
+hold=[]
+hold=data.split(",")
+phone_number=hold[0]
+phrase_query = ""
+for i in range(1,len(hold)):
+    phrase_query = phrase_query + hold[i] + ' '
+train = str(input("Would you like to train the model? [Y/N]: ")).upper()
 
 if train == "N":
     #blackList URL
@@ -52,16 +63,19 @@ if train == "N":
     with open('data/lang_model/spam.csv','r') as data:
         casesModel = len(data.readlines())
 
-    #data_set = "PLACEHOLDER"
-    print(overallRes)
+    if overallRes == "Spam":
+        print(overallRes, ', Your message is not safe')
+    else:
+        print(overallRes, ', Your message is safe')
 
 
 elif train == "Y":
-    print("test point 2")
-    state=str(input("is this a spam or ham? [spam/ham]: "))
+    print("Is this message a spam or ham? [spam/ham]: ")
+    state=str(input("   >> ")).lower()
+    print(" ")
 
     data = str(state + ',' + phrase_query + ","+","+",")
-    print(data)
+    #print(data)
     with open('data/lang_model/spam.csv','r') as spam_file:
         mylist = [line.rstrip('\n') for line in spam_file]
         if data not in mylist:
@@ -72,60 +86,10 @@ elif train == "Y":
 
     if state == "spam":
         addBlacklistPH(phone_number)
-
         try:
             url = re.findall(r'(https?:\/\/)?(\w+(\.\w+)+)(\/\w*)*', phrase_query)[0][1]
             addBlacklistURL(url)
         except:
             pass
 
-
     print("Training complete")
-
-
-'''
-import pandas as pd
-import numpy as np
-import pickle 
-
-model_in = open('model_pickle','rb')
-pipeline_model = pickle.load(model_in)
-
-inputdata = input("Input the message: ")
-result = pipeline_model.predict(pd.Series(np.array([inputdata])))
-
-if result == ['ham']:
-    print("Your SMS is clean")
-    case = "ham"
-else:
-    print("Your SMS is possibly a SCAM!")
-    case = "spam"
-
-checkIf = input("Is the response expected? [y/n]")
-
-while True:
-    try:
-        if checkIf == "y" or checkIf == "n":
-            pass
-    except Exception:
-        checkIf = input("Is the response expected? [y/n]")
-        continue
-    break
-
-if checkIf == "y":
-    pass
-elif result == ['ham']:
-    case = "spam"
-else:
-    case = "ham"
-
-data = str(case + ',' + inputdata + ","+","+",")
-
-with open('spam.csv','r') as spam_file:
-    mylist = [line.rstrip('\n') for line in spam_file]
-    if data not in mylist:
-        with open('spam.csv','a') as spam_addon:
-            spam_addon.write(str(data+'\n'))
-        spam_addon.close()
-spam_file.close()
-'''

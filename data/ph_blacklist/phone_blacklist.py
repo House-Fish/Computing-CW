@@ -52,8 +52,8 @@ def removeBlacklistPH(phoneNum):
     data = dict()
     phoneNum = str(phoneNum)
 
-    print("Removing Data into phone-number.csv")
-    
+    print("Changing Data in phone-number.csv")
+
     numData = open("data/ph_blacklist/phone-number.csv")
     
     #Pull and store data into Dictionary
@@ -77,7 +77,7 @@ def removeBlacklistPH(phoneNum):
         for pos in data:
             file_data.write(str(pos) + ',' + str(data[pos])+ '\n')
     
-    print("Data successfully removed")
+    print("Data successfully changed in phone-number.csv")
     
     return True
 

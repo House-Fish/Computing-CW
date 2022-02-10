@@ -50,7 +50,7 @@ def addBlacklistURL(url):
 def removeBlacklistURL(url):
     data = dict()
 
-    print("Removing Data into links.csv")
+    print("Removing Data from links.csv")
         
     numData = open("data/link_blacklist/links.csv")
     
