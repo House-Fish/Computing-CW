@@ -19,13 +19,31 @@ def clear():
 clear()
 
 #ask user for input
-print("Input the phone number and the message to be checked seperated by a comma: ")
-print("     Example input: 88888888, hello how are you?")
+print("Input the phone number and the message to be checked seperated and an 'end' seperated by a comma: ")
+print("     Example input: 88888888, hello how are you?, end")
 data=str(input("Input here: "))
-print(" ")
 hold=[]
 hold=data.split(",")
 phone_number=hold[0]
+
+
+while True:
+    strippedText = str(str(hold[len(hold)-1:])).replace('[','').replace(']','').replace('\'','').replace('\"','').strip().lower()
+    if strippedText == "end":
+        print(" ")
+        break
+    else: 
+        print(" ")
+        print("Continue your input and end it with an 'end' seperated by a comma or type END to finish the input: ")
+        print("     Example input: 'could you donate me some of your money?, end' or 'END'")
+        additional=str(input("Input here: "))
+        print(" ")
+        newHold=additional.split(",")
+        for i in range(len(newHold)):
+            hold.append(newHold[i])
+        #print(hold)
+
+
 phrase_query = ""
 for i in range(1,len(hold)):
     phrase_query = phrase_query + hold[i] + ' '
@@ -48,7 +66,7 @@ if train == "N":
 
     if langRes == "spam":
         result[0] = True
-    if PHBlacklist > 5:
+    if PHBlacklist > 2:
         result[1] = True
     if URLBlacklist > 2:
         result[2] = True
