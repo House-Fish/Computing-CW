@@ -1,4 +1,4 @@
-# Spammed? 
+# Spammed 
 
 **Spammed** is an API that idenifies possibly harmful and dangerous messages! This is done through through an assesment of the **language used in the message**, a **blacklist of websites found in the message** & a **list of blacklisted phone numbers**. This program can be used directly by software developers with Messaging apps or even by freelance developers hoping to create an app to indentify these Messages in widely used apps. (E.g.Whatsapp, IMessage or Facebook Messanger) 
 
@@ -54,3 +54,70 @@ The API will return a JSON format response which is commonly used in API's, if y
 $ python3 main.py
 ```
 Following the instructions as shown in the terminal. 
+
+# Examples
+Examples of code that you can use to test the program, 
+## main.py
+Example #1:
+* 91237712, Hi, my name is Jay Liew and i would like to welcome you to School of Science of Technology, end
+* Train Model: N
+
+_Ham, Your message is  safe_
+
+Example #2:
+
+* 97320611, You are awarded a SiPix Digital Camera! call 09061221061 from landline. Delivery within 28days. T Cs Box177. M221BP. 2yr warranty., end
+* Train Model: N
+
+_Spam, Your message is not safe_
+
+Example #3:
+
+* 97320605, PRIVATE! Your 2003 Account Statement for shows 800 un-redeemed S.I.M. points. Call 08718738001 Identifier Code: 49557 Expires 26/11/04, at 3?, end
+* Train Model: N
+
+_Spam, Your message is not safe_
+
+Example #4:
+
+* 92972803, Hi, I would like to contact you about your cya tryouts, could i find you tomorrow after school, at 3?, end
+* Train Model: N
+
+_Ham, Your message is  safe_
+
+## api.py
+Example #1: 
+* http://127.0.0.1:6969/requests/?phone=97320611&requests=omg%20how%20was%20your%20trip%20to%20japan?%20i%20heard%20you%20had%20alot%20of%20fun%20there.
+
+{
+   "id":4,
+   "message":"omg how was your trip to japan?? i heard you had alot of fun there.",
+   "result":"ham",
+   "response":[
+      {
+         "type":"langModel",
+         "langRes":false,
+         "testCaseModel":5591
+      },
+      {
+         "type":"phBlack",
+         "PHRes":true,
+         "testCasePH":11
+      },
+      {
+         "type":"linkBlack",
+         "URLRes":false,
+         "testCaseURL":72
+      }
+   ]
+}
+
+Example #2: 
+* http://127.0.0.1:6969/requests/?phone=97320611&requests=ASKED%203MOBILE%20IF%200870%20CHATLINES%20INCLU%20IN%20FREE%20MINS.%20INDIA%20CUST%20SERVs%20SED%20YES.%20L8ER%20GOT%20MEGA%20BILL.%203%20DONT%20GIV%20A%20SHIT.
+
+{ "id": 5, "message": "ASKED 3MOBILE IF 0870 CHATLINES INCLU IN FREE MINS. INDIA CUST SERVs SED YES. L8ER GOT MEGA BILL. 3 DONT GIV A SHIT.", "result": "spam", "response": [ { "type": "langModel", "langRes": true, "testCaseModel": 5592 }, { "type": "phBlack", "PHRes": true, "testCasePH": 11 }, { "type": "linkBlack", "URLRes": false, "testCaseURL": 73 } ] }
+
+Example #3:
+* http://127.0.0.1:6969/requests/?phone=97320611&requests=PRIVATE!%20Your%202003%20Account%20Statement%20for%20shows%20800%20un-redeemed%20S.I.M.%20points.%20Call%2008718738001%20Identifier%20Code:%2049557%20Expires%2026/11/04,%20at%203?
+
+{ "id": 6, "message": "PRIVATE! Your 2003 Account Statement for shows 800 un-redeemed S.I.M. points. Call 08718738001 Identifier Code: 49557 Expires 26/11/04, at 3?", "result": "spam", "response": [ { "type": "langModel", "langRes": true, "testCaseModel": 5593 }, { "type": "phBlack", "PHRes": true, "testCasePH": 11 }, { "type": "linkBlack", "URLRes": false, "testCaseURL": 74 } ] }

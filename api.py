@@ -85,6 +85,8 @@ def request_page():
     
     return json_dump
 
+# Link: http://127.0.0.1:6969/return/?id=PLACEHOLDERFORTHEIDOFTHEINSTANCE
+
 @app.route('/return/', methods=['GET']) #For official use during actual testing 
 
 def error_page():
