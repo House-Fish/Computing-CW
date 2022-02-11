@@ -1,6 +1,6 @@
 # Spammed? 
 
-`Spammed` is an API that idenifies possibly harmful and dangerous messages! This is done through through an assesment of the **language used in the message**, a **blacklist of websites found in the message** & a **list of blacklisted phone numbers**. This program can be used directly by software developers with Messaging apps or even by freelance developers hoping to create an app to indentify these Messages in widely used apps. (E.g.Whatsapp, IMessage or Facebook Messanger) 
+**Spammed** is an API that idenifies possibly harmful and dangerous messages! This is done through through an assesment of the **language used in the message**, a **blacklist of websites found in the message** & a **list of blacklisted phone numbers**. This program can be used directly by software developers with Messaging apps or even by freelance developers hoping to create an app to indentify these Messages in widely used apps. (E.g.Whatsapp, IMessage or Facebook Messanger) 
 
 # Installation
 This document has been updated for the latest version of this project.
