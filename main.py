@@ -19,7 +19,7 @@ def clear():
 clear()
 
 #ask user for input
-print("Input the phone number and the message to be checked seperated and an 'end' seperated by a comma: ")
+print("Input the phone number and the message to be checked seperated and an 'end' seperated by commas: ")
 print("     Example input: 88888888, hello how are you?, end")
 data=str(input("Input here: "))
 hold=[]
