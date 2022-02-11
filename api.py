@@ -1,3 +1,5 @@
+#Jia Yu - Entire File
+
 import re
 import pandas as pd
 import numpy as np
@@ -37,7 +39,8 @@ def request_page():
     for i in range(len(phrase_list)):
         phrase_querydata = phrase_query + phrase_list[i]
     
-    #blackList URL
+    #Boaz contributed to this portion of the Regex code
+    #blackList links
     try:
         url = re.findall(r'(https?:\/\/)?(\w+(\.\w+)+)(\/\w*)*', phrase_querydata)[0][1]
         URLBlacklist = isBlacklistURL(url)
